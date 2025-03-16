@@ -1112,3 +1112,73 @@ const words = [
   },
 ];
 
+function removeDuplicatesByProperty(arr, property) {
+  return arr.filter(
+    (obj, index, self) =>
+      index === self.findIndex((o) => o[property] === obj[property])
+  );
+}
+
+let uniqueArray = removeDuplicatesByProperty(words, "word");
+
+const contents = document.querySelector(".content");
+const typing = contents.querySelector(".typing");
+const inputs = contents.querySelector(".inputs");
+const hintType = contents.querySelector(".hint span");
+const categoryType = contents.querySelector(".category span");
+const difficultyLevel = contents.querySelector(".level span");
+const wrongLetter = contents.querySelector(".wrong-letter span");
+const guessLeft = contents.querySelector(".guess-left span");
+const resetBtn = contents.querySelector(".reset-btn");
+const win = contents.querySelector(".winlose .wins");
+const lose = contents.querySelector(".winlose .losses");
+let word;
+let maxGuess;
+let correct = [];
+let incorrects = [];
+let wins = 0;
+let losses = 0;
+
+const randomWord = () => {
+  const randomObj = uniqueArray[Math.floor(Math.random() * uniqueArray.length)];
+  word = randomObj.word.replace(" ", "").replace(" ", "").toLowerCase();
+
+  const { hint, difficulty, category } = randomObj;
+  maxGuess = 8;
+  hintType.innerText = hint;
+  difficultyLevel.innerText = difficulty;
+  categoryType.innerText = category;
+
+  correct = [];
+  incorrects = [];
+  let html = "";
+  for (word of word) {
+    html += `<input type="text" />`;
+  }
+  inputs.innerHTML = html;
+};
+randomWord();
+
+const initGame = (event) => {
+  const key = event.target.value.trim().toLowerCase();
+  if (
+    key.match(/^[A-Za-z]+$/) &&
+    !incorrects.includes(`${key}`) &&
+    !correct.includes(`${key}`)
+  ) {
+    if (word.includes(key)) {
+      for (let i = 1; i < word.length; i++) {
+        if (word[i] === key) {
+          correct.push(key);
+          inputs = document.querySelectorAll("input")[i].value = key;
+        }
+      }
+    } else {
+      incorrects.push(key);
+      maxGuess--;
+    }
+    guessLeft.innerHTML = maxGuess;
+    wrongLetter.innerText = incorrects;
+  }
+};
+            
